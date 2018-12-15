@@ -16,12 +16,12 @@
 # along with FSE 2019.  If not, see <http://www.gnu.org/licenses/>.
 
 """Driver for 2 TB6612FNG DC motors mounted to a single chassis."""
+import sys
+from os.path import dirname
+sys.path.append(dirname(__file__))
 
-import os
 import time
-
 import wiringpi
-
 from gpio_manager import GPIO_Manager
 
 
@@ -52,7 +52,7 @@ class MotorDriver(GPIO_Manager):
 
     @staticmethod
     def to_dc(dc):
-        return (1023 * dc) / 100
+        return int((1023 * dc) / 100)
 
     def __init__(self):
         if os.getuid():
@@ -137,32 +137,32 @@ class MotorDriver(GPIO_Manager):
 if __name__ == '__main__':
     with MotorDriver() as tb6612fng:
         while True:
-            print "forward"
+            print("forward")
             tb6612fng.forward()
             time.sleep(3)
 
             tb6612fng.stop()
             time.sleep(3)
 
-            print "reverse"
+            print("reverse")
             tb6612fng.reverse()
             time.sleep(3)
 
             tb6612fng.stop()
             time.sleep(3)
 
-            print "left"
+            print("left")
             tb6612fng.left()
             time.sleep(3)
 
             tb6612fng.stop()
             time.sleep(3)
 
-            print "right"
+            print("right")
             tb6612fng.right()
             time.sleep(3)
 
             tb6612fng.stop()
             time.sleep(3)
 
-            print "Done!"
+            print("Done!")

@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # This file is part of FSE 2019.
@@ -18,16 +17,21 @@
 
 """Robot interface combining ultrasonic, LED and motor drivers."""
 
+import sys
+from os.path import dirname
+sys.path.append(dirname(__file__))
+
 import time
-from buzzer import BUZZER
-from rgbLed import RGBLED
-from hcsr04 import HCSR04, UltrasonicTimeoutError
+from  FseDevBoard.rgbLed import RGBLED
+from  FseDevBoard.buzzer import BUZZER
+from  FseDevBoard.hcsr04 import HCSR04, UltrasonicTimeoutError
 
 class PDC(object):
     """ PDC class """
     def __init__(self):
         self.ultrasonic = HCSR04()
         self.rgbled = RGBLED()
+        self.buzzer = BUZZER()
         self.rgbled.pwmDriver.setPwmFreq(600)
 
     def setPDCColor(self, color):
@@ -43,6 +47,7 @@ class PDC(object):
         """Release internally used resources."""
         self.ultrasonic.__exit__()
         self.rgbled.__exit__()
+        self.buzzer.__exit__()
 
     @property
     def getDistance(self):
@@ -65,7 +70,7 @@ class PDC(object):
             arg_g = 25.5 * dist - 127.5
             return  (255,arg_g,0)
         else:
-            return (0,0,0)
+            return (255,0,0)
 
     @property
     def hex_to_rgb(hex_value):
@@ -79,7 +84,9 @@ if __name__ == "__main__":
         while True:
             dist = pdc.getDistance
             if dist is not None:
+                if dist <=30 and dist >=1:
+                    pdc.buzzer.buzzForTime(dist*0.02)
                 pdc.setPDCColor(pdc.dist2color(dist))
-                print(dist)
+                print("distance = {0} cm".format(dist))
 
 
